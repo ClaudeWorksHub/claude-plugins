@@ -15,7 +15,7 @@ Claude Code plugin marketplace maintained by [ClaudeWorksHub](https://github.com
 /plugin marketplace add ClaudeWorksHub/claude-plugins
 
 # 2. Install a plugin / 安装插件
-/plugin install huashanlunjian@claude-plugins
+/plugin install huashanlunjian@claudeworkshub
 
 # 3. Activate / 激活
 /reload-plugins
@@ -24,8 +24,8 @@ Claude Code plugin marketplace maintained by [ClaudeWorksHub](https://github.com
 ## Update / 更新
 
 ```bash
-/plugin marketplace update claude-plugins
-/plugin install huashanlunjian@claude-plugins
+/plugin marketplace update claudeworkshub
+/plugin install huashanlunjian@claudeworkshub
 /reload-plugins
 ```
 
