@@ -1,0 +1,27 @@
+{
+  "name": "claude-plugins",
+  "owner": {
+    "name": "ClaudeWorksHub",
+    "email": "sunfjun@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "huashanlunjian",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/sunfjun/huashanlunjian.git",
+        "sha": "151b46890a5071a6ab2870d66577fbb2f39c5e77"
+      },
+      "description": "华山论剑 — Multi-AI role debate plugin for generating high-quality proposals. Multiple AI roles (林黛玉, 诸葛亮, 孙悟空, 王熙凤) review and challenge proposals from different perspectives until consensus is reached.",
+      "version": "1.1.0",
+      "author": {
+        "name": "Mark",
+        "email": "sunfjun@gmail.com"
+      },
+      "homepage": "https://github.com/sunfjun/huashanlunjian",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": ["proposal", "debate", "multi-agent", "review"]
+    }
+  ]
+}
