@@ -6,7 +6,7 @@
   },
   "plugins": [
     {
-      "name": "huashanlunjian",
+      "name": "symposion",
       "source": {
         "source": "url",
         "url": "https://github.com/sunfjun/huashanlunjian.git",
