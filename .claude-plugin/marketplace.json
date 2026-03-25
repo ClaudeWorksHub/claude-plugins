@@ -10,10 +10,10 @@
       "source": {
         "source": "url",
         "url": "https://github.com/sunfjun/huashanlunjian.git",
-        "sha": "be8f2fbc42f70911bb7e5fa73234bd74e8a698c6"
+        "sha": "dac796aed9ac55fd416bf845c8d162833686a0c0"
       },
-      "description": "华山论剑 — Multi-AI role debate plugin for generating high-quality proposals. Multiple AI roles (林黛玉, 诸葛亮, 孙悟空, 王熙凤) review and challenge proposals from different perspectives until consensus is reached.",
-      "version": "1.1.0",
+      "description": "Symposion — Multi-AI role debate plugin for generating high-quality proposals. Four Greek mythology roles (Momus, Cassandra, Athena, Hephaestus) review and challenge proposals from different perspectives until consensus is reached.",
+      "version": "2.0.0",
       "author": {
         "name": "Mark",
         "email": "sunfjun@gmail.com"
