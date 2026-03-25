@@ -10,7 +10,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/sunfjun/huashanlunjian.git",
-        "sha": "c0e0d23c500e6b71d79f1b6fffdb1ff9b2a6af08"
+        "sha": "c0e0d2310c6be9aca288f295e435bde332d4093f"
       },
       "description": "Symposion — Multi-AI role debate plugin for generating high-quality proposals. Four Greek mythology roles (Momus, Cassandra, Athena, Hephaestus) review and challenge proposals from different perspectives until consensus is reached.",
       "version": "2.0.0",
