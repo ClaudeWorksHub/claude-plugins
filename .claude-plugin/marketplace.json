@@ -10,7 +10,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/ClaudeWorksHub/agora.git",
-        "sha": "dc040691f6a63436ac769fe2c5ba57ce3f17988e"
+        "sha": "070887e17a1e546d1a0fc99bb2c416d572cc2e1b"
       },
       "description": "Agora — Multi-AI role debate plugin for code-aware proposals. Four Greek mythology roles independently explore code and debate from different perspectives until consensus is reached.",
       "version": "2.1.0",
@@ -21,7 +21,13 @@
       "homepage": "https://github.com/ClaudeWorksHub/agora",
       "license": "MIT",
       "category": "productivity",
-      "tags": ["proposal", "debate", "multi-agent", "review", "interactive"]
+      "tags": [
+        "proposal",
+        "debate",
+        "multi-agent",
+        "review",
+        "interactive"
+      ]
     }
   ]
 }
