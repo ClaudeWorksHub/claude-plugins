@@ -1,79 +1,71 @@
 name: Sync Plugin Versions
 
 on:
-  schedule:
-    # Every 30 minutes
-    - cron: '*/30 * * * *'
+  repository_dispatch:
+    types: [plugin-update]
+
+  # Manual fallback
   workflow_dispatch:
+    inputs:
+      plugin:
+        description: 'Plugin name (e.g. agora)'
+        required: true
+      version:
+        description: 'Version (e.g. 2.1.0)'
+        required: true
+      sha:
+        description: 'Commit SHA from plugin repo'
+        required: true
 
 permissions:
   contents: write
 
 jobs:
-  sync:
+  update-marketplace:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check for plugin updates
-        id: check
+      - name: Resolve inputs
+        id: params
         run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "plugin=${{ github.event.client_payload.plugin }}" >> "$GITHUB_OUTPUT"
+            echo "version=${{ github.event.client_payload.version }}" >> "$GITHUB_OUTPUT"
+            echo "sha=${{ github.event.client_payload.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "plugin=${{ inputs.plugin }}" >> "$GITHUB_OUTPUT"
+            echo "version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "sha=${{ inputs.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update marketplace.json
+        run: |
+          PLUGIN="${{ steps.params.outputs.plugin }}"
+          VERSION="${{ steps.params.outputs.version }}"
+          SHA="${{ steps.params.outputs.sha }}"
           FILE=".claude-plugin/marketplace.json"
-          CHANGED=false
 
-          # For each plugin in marketplace.json, check latest tag from its source repo
-          for PLUGIN in $(jq -r '.plugins[].name' "$FILE"); do
-            REPO_URL=$(jq -r --arg n "$PLUGIN" '.plugins[] | select(.name == $n) | .source.url' "$FILE")
-            CURRENT_VER=$(jq -r --arg n "$PLUGIN" '.plugins[] | select(.name == $n) | .version' "$FILE")
+          echo "Updating ${PLUGIN} to v${VERSION} (${SHA})"
 
-            # Extract owner/repo from URL
-            REPO=$(echo "$REPO_URL" | sed 's|https://github.com/||;s|\.git$||')
+          jq --arg name "$PLUGIN" --arg ver "$VERSION" --arg sha "$SHA" \
+            '(.plugins[] | select(.name == $name)) |= (.version = $ver | .source.sha = $sha)' \
+            "$FILE" > tmp.json && mv tmp.json "$FILE"
 
-            # Get latest version tag
-            LATEST_TAG=$(gh api "repos/${REPO}/tags" --jq '.[].name' 2>/dev/null \
-              | grep '^v' | sort -V | tail -1)
-
-            if [ -z "$LATEST_TAG" ]; then
-              echo "⚠️ ${PLUGIN}: no version tags found"
-              continue
-            fi
-
-            LATEST_VER="${LATEST_TAG#v}"
-            if [ "$CURRENT_VER" = "$LATEST_VER" ]; then
-              echo "✅ ${PLUGIN}: v${CURRENT_VER} (up to date)"
-              continue
-            fi
-
-            # Get the commit SHA for this tag
-            TAG_SHA=$(gh api "repos/${REPO}/git/ref/tags/${LATEST_TAG}" --jq '.object.sha' 2>/dev/null)
-            # If it's an annotated tag, dereference to the commit
-            TAG_TYPE=$(gh api "repos/${REPO}/git/tags/${TAG_SHA}" --jq '.object.type' 2>/dev/null || echo "commit")
-            if [ "$TAG_TYPE" = "commit" ]; then
-              COMMIT_SHA=$(gh api "repos/${REPO}/git/tags/${TAG_SHA}" --jq '.object.sha' 2>/dev/null || echo "$TAG_SHA")
-            else
-              COMMIT_SHA="$TAG_SHA"
-            fi
-
-            echo "🔄 ${PLUGIN}: v${CURRENT_VER} → v${LATEST_VER} (${COMMIT_SHA})"
-
-            jq --arg n "$PLUGIN" --arg v "$LATEST_VER" --arg s "$COMMIT_SHA" \
-              '(.plugins[] | select(.name == $n)) |= (.version = $v | .source.sha = $s)' \
-              "$FILE" > tmp.json && mv tmp.json "$FILE"
-
-            CHANGED=true
-          done
-
-          echo "changed=${CHANGED}" >> "$GITHUB_OUTPUT"
+          # Verify
+          UPDATED=$(jq -r --arg name "$PLUGIN" '.plugins[] | select(.name == $name) | .version' "$FILE")
+          if [ "$UPDATED" != "$VERSION" ]; then
+            echo "::error::Update failed — expected ${VERSION}, got ${UPDATED}"
+            exit 1
+          fi
+          echo "✅ ${PLUGIN} updated to v${VERSION}"
 
       - name: Commit and push
-        if: steps.check.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .claude-plugin/marketplace.json
-          git diff --cached --quiet && exit 0
-          git commit -m "Auto-sync plugin versions"
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update ${{ steps.params.outputs.plugin }} plugin to v${{ steps.params.outputs.version }}"
           git push
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
