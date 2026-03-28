@@ -10,10 +10,10 @@
       "source": {
         "source": "url",
         "url": "https://github.com/ClaudeWorksHub/agora.git",
-        "sha": "6eb5b3fccfa932d247164b2c32b4c0c145443cee"
+        "sha": "2f0e9db26978c024cefbecf4608f40dda29daac6"
       },
       "description": "Agora — Multi-AI role debate plugin for code-aware proposals. Four Greek mythology roles independently explore code and debate from different perspectives until consensus is reached.",
-      "version": "2.4.0",
+      "version": "1.0.0",
       "author": {
         "name": "Mark",
         "email": "sunfjun@gmail.com"
